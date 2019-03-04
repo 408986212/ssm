@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- bu用接口时可以随意写  -->
+<mapper namespace="UserHouse">
+	
+	<insert id="add" parameterType="com.yyf.entity.UserHouse">
+		insert into yyf_userhouse(u_id,h_id)
+		values(#{u_id},#{h_id})
+	</insert>
+	<insert id="addMore" >
+		insert into yyf_userhouse(h_id,u_id)values
+		<foreach collection="list" item="s" separator=",">
+		(#{s.h_id},#{s.u_id})
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.yyf.entity.UserHouse">
+		update yyf_userhouse set
+		name = #{name},
+		h_id = #{h_id},
+		u_id = #{u_id}	
+		where id=#{id}
+		
+	
+	</update>
+	
+	
+	<select id="queryById" parameterType="int" resultType="UserHouse">
+		select <!-- <include refid="commonCols"></include> -->id,h_id,u_id from yyf_userhouse where id = #{id}
+	</select>
+	
+	<select id="queryByPage" parameterType="map" resultType="UserHouse">
+	select * from ( select a.*, rownum rn from (	select u.id,uh.h_id,u.name uname,h.hname from yyf_house h, yyf_userinformation u,yyf_userhouse uh where h.id=uh.id and uh.id=u.id
+) a where rownum &lt;= #{pageSize}) where rn  >= #{start}
+	</select>
+	
+	<select id="queryAll" resultType="UserHouse">
+			select id,h_id,u_id from yyf_userhouse 
+	<!-- 		select id,name,username,password,sex,age,birthday,createTime from yyf_userhouse where id&lt;100     id序号小于100 -->
+	</select>
+	<select id="queryV" resultType="UserHouse">
+	
+	</select>
+	<select id="getTotals" resultType="int">
+		SELECT count(*)from yyf_userhouse
+	</select>
+	<delete id="deleteById">
+		delete from yyf_userhouse where id = #{id}
+	</delete>
+	<!-- 批量删除 -->
+	<delete id="deleteMore" parameterType="list">
+		delete from yyf_userhouse where id in
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+		#{id}
+		</foreach>
+	</delete>
+	
+</mapper>

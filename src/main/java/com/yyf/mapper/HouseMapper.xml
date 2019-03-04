@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- bu用接口时可以随意写  -->
+<mapper namespace="House">
+	
+	<insert id="add" parameterType="com.yyf.entity.House">
+		insert into yyf_house(hname,price,p1,p2,address,houseDate)
+		values(#{hname},#{price},#{p1},#{p2},#{address},#{houseDate})
+	</insert>
+	<insert id="addMore" >
+		insert into yyf_house(hname,price,p1,p2,address,houseDate)values
+		<foreach collection="list" item="s" separator=",">
+		(#{s.hname},#{s.price},#{s.p1},#{s.p2},#{s.address},#{s.houseDate})
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.yyf.entity.House">
+		update yyf_house set
+		hname = #{hname},
+		price = #{price},
+		p1 = #{p1},
+		p2 = #{p2},
+		address = #{address},
+		houseDate = #{houseDate}
+		where id=#{id}
+		
+	
+	</update>
+	
+	
+	<select id="queryById" parameterType="int" resultType="House">
+		select <!-- <include refid="commonCols"></include> -->id,name,username,password,age,sex,birthday,createTime from yyf_house where id = #{id}
+	</select>
+	
+	<select id="queryByPage" parameterType="map" resultType="House">
+	select * from ( select a.*, rownum rn from (select * from yyf_house) a where rownum &lt;= #{pageSize}) where rn  >= #{start}
+	</select>
+	
+	<select id="queryAll" resultType="House">
+			select id,name,username,password,age,sex,birthday,createTime from yyf_house 
+	<!-- 		select id,name,username,password,sex,age,birthday,createTime from yyf_house where id&lt;100     id序号小于100 -->
+	</select>
+	
+	<select id="getTotals" resultType="int">
+		SELECT count(*)from yyf_house
+	</select>
+	<delete id="deleteById">
+		delete from yyf_house where id = #{id}
+	</delete>
+	<!-- 批量删除 -->
+	<delete id="deleteMore" parameterType="list">
+		delete from yyf_house where id in
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+		#{id}
+		</foreach>
+	</delete>
+	
+</mapper>

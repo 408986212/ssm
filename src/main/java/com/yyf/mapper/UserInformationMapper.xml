@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- bu用接口时可以随意写  -->
+<mapper namespace="UserInformation">
+	
+	<insert id="add" parameterType="com.yyf.entity.UserInformation">
+		insert into yyf_userinformation(name,username,password,age,sex,birthday,createTime)
+		values(#{name},#{username},#{password},#{age},#{sex},#{birthday},sysdate)
+	</insert>
+	<insert id="addMore" >
+		insert into yyf_userinformation(name,username,password,age,sex,birthday,createTime)values
+		<foreach collection="list" item="s" separator=",">
+		(#{s.name},#{s.username},#{s.password},#{s.age},#{s.sex},##{s.birthday},s.sysdate)
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.yyf.entity.UserInformation">
+		update yyf_userinformation set
+		name = #{name},
+		username = #{username},
+		password = #{password},
+		sex = #{sex},
+		age = #{age},
+		birthday = #{birthday},
+		createTime = sysdate
+		where id=#{id}
+		
+	
+	</update>
+	
+	
+	<select id="queryById" parameterType="int" resultType="UserInformation">
+		select <!-- <include refid="commonCols"></include> -->id,name,username,password,age,sex,birthday,createTime from yyf_userinformation where id = #{id}
+	</select>
+	
+	<select id="queryByPage" parameterType="map" resultType="UserInformation">
+	select * from ( select a.*, rownum rn from (select * from yyf_userinformation) a where rownum &lt;= #{pageSize}) where rn  >= #{start}
+	</select>
+	
+	<select id="queryAll" resultType="UserInformation">
+			select id,name,username,password,age,sex,birthday,createTime from yyf_userinformation 
+	<!-- 		select id,name,username,password,sex,age,birthday,createTime from yyf_userinformation where id&lt;100     id序号小于100 -->
+	</select>
+	
+	<select id="getTotals" resultType="int">
+		SELECT count(*)from yyf_userinformation
+	</select>
+	<delete id="deleteById">
+		delete from yyf_userinformation where id = #{id}
+	</delete>
+	<!-- 批量删除 -->
+	<delete id="deleteMore" parameterType="list">
+		delete from yyf_userinformation where id in
+		<foreach collection="array" open="(" close=")" separator="," item="id">
+		#{id}
+		</foreach>
+	</delete>
+	
+</mapper>
